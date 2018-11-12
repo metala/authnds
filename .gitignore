@@ -12,6 +12,7 @@ certs/
 
 # Built binaries
 bin
+/debug
 
 bindata.go
 

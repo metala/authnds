@@ -86,27 +86,30 @@ type configAPI struct {
 	TLS         bool
 }
 type configUser struct {
-	Name          string
-	OtherGroups   []int
-	UserPassword  string
-	PassSHA256    string
+	CommonName string
+	Disabled   bool
+	// Person
+	DisplayName  string
+	GivenName    string
+	Surname      string
+	UserPassword string
+	Mail         string
+	// Posix
+	PosixGroupID int
+	PosixUserID  int
+	Homedir      string
+	LoginShell   string
+	SSHKeys      []string
+	// 2FA
+	OTPSecret string
+	Yubikey   string
+	// Extra
+	GroupNames    []string
 	PassAppSHA256 []string
-	PrimaryGroup  int
-	SSHKeys       []string
-	OTPSecret     string
-	Yubikey       string
-	Disabled      bool
-	UnixID        int
-	Mail          string
-	LoginShell    string
-	GivenName     string
-	SN            string
-	Homedir       string
 }
 type configGroup struct {
-	Name          string
-	UnixID        int
-	IncludeGroups []int
+	CommonName  string
+	Description string
 }
 type config struct {
 	API                configAPI
