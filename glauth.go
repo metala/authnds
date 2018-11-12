@@ -88,6 +88,7 @@ type configAPI struct {
 type configUser struct {
 	Name          string
 	OtherGroups   []int
+	UserPassword  string
 	PassSHA256    string
 	PassAppSHA256 []string
 	PrimaryGroup  int

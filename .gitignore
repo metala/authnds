@@ -1,5 +1,8 @@
+# IDEs
+.vscode/
+
 # Ignore default config file for testing
-glauth.cfg
+glauth.toml
 
 # Ignore the built binary during testing
 glauth

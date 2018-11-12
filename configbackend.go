@@ -4,12 +4,13 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"github.com/GeertJohan/yubigo"
-	"github.com/nmcclain/ldap"
-	"github.com/pquerna/otp/totp"
 	"net"
 	"sort"
 	"strings"
+
+	"github.com/GeertJohan/yubigo"
+	"github.com/nmcclain/ldap"
+	"github.com/pquerna/otp/totp"
 )
 
 type configHandler struct {
@@ -125,7 +126,6 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 
 	// check app passwords first
 	for index, appPw := range user.PassAppSHA256 {
-
 		if appPw != hex.EncodeToString(hashFull.Sum(nil)) {
 			log.Debug(fmt.Sprintf("Attempted to bind app pw #%d - failure as %s from %s", index, bindDN, conn.RemoteAddr().String()))
 		} else {
@@ -133,7 +133,15 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 			log.Debug("Bind success using app pw #%d as %s from %s", index, bindDN, conn.RemoteAddr().String())
 			return ldap.LDAPResultSuccess, nil
 		}
+	}
 
+	if user.UserPassword != "" {
+		passErr := checkPassword(user.UserPassword, bindSimplePw)
+		if passErr != nil {
+			log.Warning(fmt.Sprintf("Bind Error: invalid userPassword verification"))
+			return ldap.LDAPResultInvalidCredentials, passErr
+		}
+		return ldap.LDAPResultSuccess, nil
 	}
 
 	// then check main password with the hash
@@ -196,7 +204,7 @@ func (h configHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn 
 			dn := fmt.Sprintf("cn=%s,ou=groups,%s", g.Name, h.cfg.Backend.BaseDN)
 			entries = append(entries, &ldap.Entry{dn, attrs})
 		}
-	case "posixaccount", "":
+	case "posixaccount", "inetorgperson", "person", "":
 		for _, u := range h.cfg.Users {
 			attrs := []*ldap.EntryAttribute{}
 			attrs = append(attrs, &ldap.EntryAttribute{"cn", []string{u.Name}})
