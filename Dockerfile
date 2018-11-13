@@ -2,8 +2,7 @@
 # Build Step
 #################
 
-FROM golang:alpine as build
-MAINTAINER Ben Yanke <ben@benyanke.com>
+FROM golang:1.11 as build
 
 # Setup work env
 RUN mkdir /app /tmp/gocode
@@ -15,9 +14,7 @@ WORKDIR /app
 ENV GOPATH=/tmp/gocode
 ENV GOOS=linux
 ENV GOARCH=amd64
-
-# Only needed for alpine builds
-RUN apk add --no-cache git bzr make
+ENV CGO_ENABLED=0
 
 # Install deps
 RUN go get -d -v ./...
@@ -32,25 +29,18 @@ RUN make linux64 && cp ./bin/glauth64 /app/glauth
 # Run Step
 #################
 
-FROM golang:alpine as run
-MAINTAINER Ben Yanke <ben@benyanke.com>
-
-# Copies a sample config to be used if a volume isn't mounted with user's config
-ADD sample-simple.cfg /app/config/config.cfg
+FROM scratch
 
 # Copy binary from build container
 COPY --from=build /app/glauth /app/glauth
 
-# Copy docker specific scripts from build container
-COPY --from=build /app/scripts/docker/start.sh /app/docker/
-COPY --from=build /app/scripts/docker/default-config.cfg /app/docker/
-
-# Install init
-RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64 && chmod +x /usr/local/bin/dumb-init
+# User privileges nobody:nogroup
+USER 65534:65534
 
 # Expose web and LDAP ports
-EXPOSE 389 636 5555
+EXPOSE 10389 10636 5555
 
-ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
-CMD ["/bin/sh", "/app/docker/start.sh"]
+WORKDIR /app
+ENTRYPOINT ["./glauth"]
+CMD ["-c", "/app/config.toml"]
 

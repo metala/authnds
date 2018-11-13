@@ -1,0 +1,10 @@
+.vscode/
+.github/
+scripts/
+
+*.md
+*.cfg
+*.toml
+
+bindata.go
+Dockerfile

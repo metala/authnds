@@ -2,7 +2,7 @@
 .vscode/
 
 # Ignore default config file for testing
-glauth.toml
+config.toml
 
 # Ignore the built binary during testing
 glauth

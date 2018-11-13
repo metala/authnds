@@ -65,7 +65,7 @@ format:
 	go fmt
 
 devrun:
-	go run ${BUILD_FILES} -c glauth.toml
+	go run ${BUILD_FILES} -c config.toml
 
 
 linux32:
