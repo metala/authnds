@@ -69,25 +69,25 @@ devrun:
 
 
 linux32:
-	GOOS=linux GOARCH=386 go build -ldflags "${BUILD_VARS}" -o bin/glauth32 ${BUILD_FILES} && cd bin && sha256sum glauth32 > glauth32.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth32 ${BUILD_FILES} && cd bin && sha256sum glauth32 > glauth32.sha256
 
 linux64:
-	GOOS=linux GOARCH=amd64 go build -ldflags "${BUILD_VARS}" -o bin/glauth64 ${BUILD_FILES} && cd bin && sha256sum glauth64 > glauth64.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth64 ${BUILD_FILES} && cd bin && sha256sum glauth64 > glauth64.sha256
 
 linuxarm32:
-	GOOS=linux GOARCH=arm go build -ldflags "${BUILD_VARS}" -o bin/glauth-arm32 ${BUILD_FILES} && cd bin && sha256sum glauth-arm32 > glauth-arm32.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-arm32 ${BUILD_FILES} && cd bin && sha256sum glauth-arm32 > glauth-arm32.sha256
 
 linuxarm64:
-	GOOS=linux GOARCH=arm64 go build -ldflags "${BUILD_VARS}" -o bin/glauth-arm64 ${BUILD_FILES} && cd bin && sha256sum glauth-arm64 > glauth-arm64.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-arm64 ${BUILD_FILES} && cd bin && sha256sum glauth-arm64 > glauth-arm64.sha256
 
 darwin64:
-	GOOS=darwin GOARCH=amd64 go build -ldflags "${BUILD_VARS}" -o bin/glauthOSX ${BUILD_FILES} && cd bin && sha256sum glauthOSX > glauthOSX.sha256
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauthOSX ${BUILD_FILES} && cd bin && sha256sum glauthOSX > glauthOSX.sha256
 
 win32:
-	GOOS=windows GOARCH=386 go build -ldflags "${BUILD_VARS}" -o bin/glauth-win32 ${BUILD_FILES} && cd bin && sha256sum glauth-win32 > glauth-win32.sha256
+	CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-win32 ${BUILD_FILES} && cd bin && sha256sum glauth-win32 > glauth-win32.sha256
 
 win64:
-	GOOS=windows GOARCH=amd64 go build -ldflags "${BUILD_VARS}" -o bin/glauth-win64 ${BUILD_FILES} && cd bin && sha256sum glauth-win64 > glauth-win64.sha256
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-win64 ${BUILD_FILES} && cd bin && sha256sum glauth-win64 > glauth-win64.sha256
 
 
 verify:

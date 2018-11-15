@@ -12,9 +12,6 @@ WORKDIR /app
 
 # Required envs for GO
 ENV GOPATH=/tmp/gocode
-ENV GOOS=linux
-ENV GOARCH=amd64
-ENV CGO_ENABLED=0
 
 # Install deps
 RUN go get -d -v ./...
