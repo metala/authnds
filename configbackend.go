@@ -75,7 +75,10 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 
 			if user.Yubikey == yubikeyid {
 				bindSimplePw = bindSimplePw[:len(bindSimplePw)-44]
-				_, ok, _ := h.yubikeyAuth.Verify(otp)
+				_, ok, err := h.yubikeyAuth.Verify(otp)
+				if err != nil {
+					log.Warningf("Yubikey OTP validation error: '%s' for '%s' from '%s'", err.Error(), bindDN, conn.RemoteAddr().String())
+				}
 				validotp = ok
 			}
 		}
@@ -97,27 +100,27 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 	// check app passwords first
 	for index, appPw := range user.PassAppSHA256 {
 		if appPw != pwHashDigest {
-			log.Debug(fmt.Sprintf("Attempted to bind app pw #%d - failure as %s from %s", index, bindDN, conn.RemoteAddr().String()))
+			log.Warningf(fmt.Sprintf("Attempted to bind app pw #%d - failure as %s from %s", index, bindDN, conn.RemoteAddr().String()))
 		} else {
 			stats_frontend.Add("bind_successes", 1)
-			log.Debug("Bind success using app pw #%d as %s from %s", index, bindDN, conn.RemoteAddr().String())
+			log.Noticef("Bind success using app pw #%d as %s from %s", index, bindDN, conn.RemoteAddr().String())
 			return ldap.LDAPResultSuccess, nil
 		}
 	}
 
 	// Then ensure the OTP is valid before checking the user password
 	if !validotp {
-		log.Warning(fmt.Sprintf("Bind Error: invalid OTP token as %s from %s", bindDN, conn.RemoteAddr().String()))
+		log.Warning(fmt.Sprintf("Bind Error: invalid OTP token as '%s' from '%s'", bindDN, conn.RemoteAddr().String()))
 		return ldap.LDAPResultInvalidCredentials, nil
 	}
 
 	if ok, err := checkPassword(user.UserPassword, bindSimplePw); !ok {
-		log.Warning(fmt.Sprintf("Bind Error: invalid userPassword verification"))
+		log.Warningf("Bind Error: invalid userPassword as '%s' from '%s'", bindDN, conn.RemoteAddr().String())
 		return ldap.LDAPResultInvalidCredentials, err
 	}
 
 	stats_frontend.Add("bind_successes", 1)
-	log.Debug("Bind success as %s from %s", bindDN, conn.RemoteAddr().String())
+	log.Noticef("Bind success as '%s' from '%s'", bindDN, conn.RemoteAddr().String())
 	return ldap.LDAPResultSuccess, nil
 }
 

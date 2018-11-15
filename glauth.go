@@ -114,7 +114,7 @@ type configGroup struct {
 type config struct {
 	API                configAPI
 	Backend            configBackend
-	Debug              bool
+	LogLevel           string
 	YubikeyClientID    string
 	YubikeySecret      string
 	Frontend           configFrontend
@@ -302,10 +302,20 @@ func doConfig() (*config, error) {
 			return &cfg, err
 		}
 	}
-	// enable features
-	if cfg.Debug {
+	// Setup logging level
+	switch cfg.LogLevel {
+	case "debug":
 		logging.SetLevel(logging.DEBUG, programName)
 		log.Debug("Debugging enabled")
+	case "error":
+		logging.SetLevel(logging.ERROR, programName)
+	case "info":
+		logging.SetLevel(logging.INFO, programName)
+		log.Debug("Debugging enabled")
+	case "warning":
+		logging.SetLevel(logging.WARNING, programName)
+	default:
+		logging.SetLevel(logging.NOTICE, programName)
 	}
 
 	if len(cfg.Frontend.Listen) > 0 && (len(cfg.LDAP.Listen) > 0 || len(cfg.LDAPS.Listen) > 0) {
