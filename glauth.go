@@ -9,7 +9,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/GeertJohan/yubigo"
 	"github.com/docopt/docopt-go"
-	"github.com/nmcclain/ldap"
+	"github.com/metala/ldap"
 	"github.com/op/go-logging"
 	"gopkg.in/amz.v1/aws"
 	"gopkg.in/amz.v1/s3"

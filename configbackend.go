@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/GeertJohan/yubigo"
-	"github.com/nmcclain/ldap"
+	"github.com/metala/ldap"
 	"github.com/pquerna/otp/totp"
 )
 

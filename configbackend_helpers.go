@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/nmcclain/ldap"
+	"github.com/metala/ldap"
 )
 
 type ldapAttrs []*ldap.EntryAttribute
