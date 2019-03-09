@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"expvar"
 	"fmt"
 	"os"
@@ -72,10 +73,11 @@ type configLDAP struct {
 	Listen  string
 }
 type configLDAPS struct {
-	Enabled bool
-	Listen  string
-	Cert    string
-	Key     string
+	Enabled    bool
+	Listen     string
+	Cert       string
+	Key        string
+	EnforceTLS bool
 }
 type configAPI struct {
 	Cert        string
@@ -112,6 +114,7 @@ type configGroup struct {
 	Description string
 }
 type config struct {
+	ServerName         string
 	API                configAPI
 	Backend            configBackend
 	LogLevel           string
@@ -207,6 +210,18 @@ func main() {
 	// configure the backend
 	s := ldap.NewServer()
 	s.EnforceLDAP = true
+	if cfg.LDAPS.EnforceTLS {
+		s.EnforceTLS = true
+		cert, err := tls.LoadX509KeyPair(cfg.LDAPS.Cert, cfg.LDAPS.Key)
+		if err != nil {
+			log.Fatalf("Unable to load TLS configuration.")
+		}
+		s.TLSConfig = &tls.Config{
+			ServerName:   cfg.ServerName,
+			Certificates: []tls.Certificate{cert},
+		}
+
+	}
 	var handler Backend
 	switch cfg.Backend.Datastore {
 	case "ldap":
