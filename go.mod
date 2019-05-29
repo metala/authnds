@@ -7,7 +7,6 @@ require (
 	github.com/docopt/docopt-go v0.0.0-20180111231733-ee0de3bc6815
 	github.com/jteeuwen/go-bindata v3.0.7+incompatible
 	github.com/kr/pretty v0.1.0
-	github.com/mark-rushakoff/ldapserver v0.2.0 // indirect
 	github.com/metala/ldap v0.3.0
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7
 	github.com/pquerna/otp v1.1.0
