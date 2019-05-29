@@ -30,19 +30,19 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 	baseDNSuffix := strings.ToLower("," + h.cfg.Backend.BaseDN)
 	usersOuSuffix := ",ou=users"
 
-	log.Debug(fmt.Sprintf("Bind request: bindDN: %s, BaseDN: %s, source: %s", bindDN, h.cfg.Backend.BaseDN, conn.RemoteAddr().String()))
+	log.Infof("Bind request: bindDN: %s, BaseDN: %s, source: %s", bindDN, h.cfg.Backend.BaseDN, conn.RemoteAddr().String())
 
 	stats_frontend.Add("bind_reqs", 1)
 
 	// parse the bindDN - ensure that the bindDN ends with the BaseDN
 	if !strings.HasSuffix(bindDN, baseDNSuffix) {
-		log.Warning(fmt.Sprintf("Bind Error: BindDN %s not our BaseDN %s", bindDN, h.cfg.Backend.BaseDN))
+		log.Warningf("Bind Error: BindDN %s not our BaseDN %s", bindDN, h.cfg.Backend.BaseDN)
 		return ldap.LDAPResultInvalidCredentials, nil
 	}
 
 	userName := strings.TrimSuffix(bindDN, baseDNSuffix)
 	if !strings.HasSuffix(userName, usersOuSuffix) {
-		log.Warning(fmt.Sprintf("Bind Error: BindDN %s is not part of ou=users,%s", bindDN, h.cfg.Backend.BaseDN))
+		log.Warningf("Bind Error: BindDN %s is not part of ou=users,%s", bindDN, h.cfg.Backend.BaseDN)
 		return ldap.LDAPResultInvalidCredentials, nil
 	}
 	userName = strings.TrimPrefix(userName, "cn=")
@@ -58,7 +58,7 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 		}
 	}
 	if !found {
-		log.Warning(fmt.Sprintf("Bind Error: User %s not found.", userName))
+		log.Warningf("Bind Error: User %s not found.", userName)
 		return ldap.LDAPResultInvalidCredentials, nil
 	}
 
@@ -110,7 +110,7 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 
 	// Then ensure the OTP is valid before checking the user password
 	if !validotp {
-		log.Warning(fmt.Sprintf("Bind Error: invalid OTP token as '%s' from '%s'", bindDN, conn.RemoteAddr().String()))
+		log.Warningf("Bind Error: invalid OTP token as '%s' from '%s'", bindDN, conn.RemoteAddr().String())
 		return ldap.LDAPResultInvalidCredentials, nil
 	}
 
@@ -129,7 +129,7 @@ func (h configHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn 
 	bindDN = strings.ToLower(bindDN)
 	baseDN := strings.ToLower("," + h.cfg.Backend.BaseDN)
 	searchBaseDN := strings.ToLower(searchReq.BaseDN)
-	log.Debug("Search request as %s from %s for %s", bindDN, conn.RemoteAddr().String(), searchReq.Filter)
+	log.Infof("Search request as %s from %s for %s", bindDN, conn.RemoteAddr().String(), searchReq.Filter)
 	stats_frontend.Add("search_reqs", 1)
 
 	// validate the user is authenticated and has appropriate access
@@ -183,7 +183,7 @@ func (h configHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn 
 	}
 
 	stats_frontend.Add("search_successes", 1)
-	log.Debug("AP: Search OK: %s", searchReq.Filter)
+	log.Infof("AP: Search OK: %s", searchReq.Filter)
 	return ldap.ServerSearchResult{
 		Entries:    filterLdapEntriesByBaseDN(entries, searchReq.BaseDN),
 		Referrals:  []string{},
