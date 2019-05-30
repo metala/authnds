@@ -129,7 +129,8 @@ func (h configHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn 
 	bindDN = strings.ToLower(bindDN)
 	baseDN := strings.ToLower("," + h.cfg.Backend.BaseDN)
 	searchBaseDN := strings.ToLower(searchReq.BaseDN)
-	log.Infof("Search request as %s from %s for %s", bindDN, conn.RemoteAddr().String(), searchReq.Filter)
+	log.Infof("Search request '%s' as '%s' from %s", searchReq.Filter, bindDN, conn.RemoteAddr().String())
+	log.Debugf("Search request: %#v as '%s' from %s", searchReq, bindDN, conn.RemoteAddr().String())
 	stats_frontend.Add("search_reqs", 1)
 
 	// validate the user is authenticated and has appropriate access
