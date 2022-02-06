@@ -71,7 +71,7 @@ func (h configHandler) userLdapAttributes(u *configUser) ldapAttrs {
 		if u.Disabled {
 			attrs.addAttribute("loginDisabled", "TRUE")
 		} else {
-			attrs.addAttribute("loginDisabled", "FALSE`")
+			attrs.addAttribute("loginDisabled", "FALSE")
 		}
 
 		if len(u.SSHKeys) > 0 {
