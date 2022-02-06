@@ -17,7 +17,7 @@ const programName = "authnds"
 var usage = `authnds: simple LDAP for auth
 
 Usage:
-  authnds [options] -c <file|s3url>
+  authnds [options] -c /path/to/config.toml
   authnds -h --help
   authnds --version
 

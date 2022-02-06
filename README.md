@@ -10,12 +10,35 @@ LDAP authentication server for developers and SOHO services. It uses a single to
 4. Test with traditional LDAP tools
    - For example: `ldapsearch -LLL -H ldap://localhost:389 -D cn=user1,ou=users,dc=example,dc=com -w secret -x -bdc=example,dc=com cn=user1`
 
+Thest result from the example / default config.
+```unix
+$ ldapsearch -LLL -H ldap://localhost:389 -D cn=user1,ou=users,dc=example,dc=com -w secret -x -bdc=example,dc=com cn=user1
+dn: cn=user1,ou=users,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: uidObject
+objectClass: posixAccount
+cn: user1
+uid: user1
+mail: ldap.user@example.com
+givenName: Ldap
+sn: User
+fullName: Ldap User
+displayName: Ldap User
+uidNumber: 5001
+gidNumber: 5501
+loginShell: /bin/bash
+homeDirectory: /home/user1
+loginDisabled: FALSE`
+accountStatus: active
+```
+
 ### Usage:
 ```
-authnds: securely expose your LDAP for external auth
+authnds: simple LDAP for auth
 
 Usage:
-  authnds [options] -c <file|s3url>
+  authnds [options] -c /path/to/config.toml
   authnds -h --help
   authnds --version
 
