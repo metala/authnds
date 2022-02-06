@@ -22,44 +22,30 @@ BUILD_FILES=authnds.go config.go configbackend.go configbackend_helpers.go passw
 #####################
 
 # Build and run - used for development
-run: setup devrun cleanup
+run: setup devrun
 
 # Run the integration test on linux64 (eventually allow the binary to be set)
 test: runtest
 
 # Run build process for all binaries
-all: setup binaries verify cleanup
+all: setup binaries verify
 
 # Run build process for only linux64
-fast: setup linux64 verify cleanup
+fast: setup linux64 verify
 
 # list of binary formats to build
 binaries: linux32 linux64 linuxarm32 linuxarm64 darwin64 win32 win64
 
 # Setup commands to always run
-setup: getdeps bindata format
+setup: getdeps format
 
 #####################
 # Subcommands
 #####################
 
-# Run integration test
-runtest:
-	./scripts/travis/integration-test.sh cleanup
-
 # Get all dependencies
 getdeps:
 	go get -d ./...
-
-updatetest:
-	./scripts/travis/integration-test.sh
-
-bindata:
-	go get -u github.com/jteeuwen/go-bindata/... && ${GOPATH}/bin/go-bindata -pkg=main assets && gofmt -w bindata.go
-
-
-cleanup:
-	rm bindata.go
 
 format:
 	go fmt
