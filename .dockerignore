@@ -1,10 +1,9 @@
 .vscode/
-.github/
 scripts/
+ssl/
 
 *.md
 *.cfg
 *.toml
 
-bindata.go
 Dockerfile

@@ -32,8 +32,6 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 
 	log.Infof("Bind request: bindDN: %s, BaseDN: %s, source: %s", bindDN, h.cfg.Backend.BaseDN, conn.RemoteAddr().String())
 
-	stats_frontend.Add("bind_reqs", 1)
-
 	// parse the bindDN - ensure that the bindDN ends with the BaseDN
 	if !strings.HasSuffix(bindDN, baseDNSuffix) {
 		log.Warningf("Bind Error: BindDN %s not our BaseDN %s", bindDN, h.cfg.Backend.BaseDN)
@@ -102,7 +100,6 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 		if appPw != pwHashDigest {
 			log.Warningf(fmt.Sprintf("Attempted to bind app pw #%d - failure as %s from %s", index, bindDN, conn.RemoteAddr().String()))
 		} else {
-			stats_frontend.Add("bind_successes", 1)
 			log.Noticef("Bind success using app pw #%d as %s from %s", index, bindDN, conn.RemoteAddr().String())
 			return ldap.LDAPResultSuccess, nil
 		}
@@ -119,7 +116,6 @@ func (h configHandler) Bind(bindDN, bindSimplePw string, conn net.Conn) (resultC
 		return ldap.LDAPResultInvalidCredentials, err
 	}
 
-	stats_frontend.Add("bind_successes", 1)
 	log.Noticef("Bind success as '%s' from '%s'", bindDN, conn.RemoteAddr().String())
 	return ldap.LDAPResultSuccess, nil
 }
@@ -131,7 +127,6 @@ func (h configHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn 
 	searchBaseDN := strings.ToLower(searchReq.BaseDN)
 	log.Infof("Search request '%s' as '%s' from %s", searchReq.Filter, bindDN, conn.RemoteAddr().String())
 	log.Debugf("Search request: %#v as '%s' from %s", searchReq, bindDN, conn.RemoteAddr().String())
-	stats_frontend.Add("search_reqs", 1)
 
 	// validate the user is authenticated and has appropriate access
 	if len(bindDN) < 1 {
@@ -183,7 +178,6 @@ func (h configHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn 
 		}
 	}
 
-	stats_frontend.Add("search_successes", 1)
 	log.Infof("AP: Search OK: %s", searchReq.Filter)
 	return ldap.ServerSearchResult{
 		Entries:    filterLdapEntriesByBaseDN(entries, searchReq.BaseDN),
@@ -195,6 +189,5 @@ func (h configHandler) Search(bindDN string, searchReq ldap.SearchRequest, conn 
 
 //
 func (h configHandler) Close(boundDn string, conn net.Conn) error {
-	stats_frontend.Add("closes", 1)
 	return nil
 }

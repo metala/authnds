@@ -1,0 +1,57 @@
+#################
+# General configuration.
+logLevel = "debug"
+#syslog = true
+
+#################
+yubikeyclientid = ""
+yubikeysecret = ""
+
+[backend]
+  baseDN = "dc=example,dc=com"
+
+#################
+# Server configuration.
+
+[ldap]
+  enabled = true
+  listen = "0.0.0.0:10389"
+
+[ldaps]
+  enabled = false
+  listen = "0.0.0.0:10636"
+  cert = "ssl/authnds.crt"
+  key = "ssl/authnds.key"
+
+#################
+# The users section
+[[users]]
+  disabled = false
+  commonName = "user1"
+  givenName="Ldap"
+  surname="User1"
+  mail = "ldap.user1@example.com"
+  posixUserID = 5001
+  posixGroupID = 5501
+  #userPassword = "{SSHA}===base64-encoded-salted-sha1==="
+  #userPassword = "{SSHA256}===base64-encoded-salted-sha256==="
+  userPassword = "{SSHA256}+E+iFJ27Yu1ODPH1UNKUmzOmUT06dwfghQJRHHnMsO5zYWx0"  # "secret"
+  otpsecret = ""
+  yubikey = ""
+  groupNames = ["developers"]
+
+#[[users]]
+#  commonName = "admin1"
+#  userPassword = "{SSHA256}===base64-encoded-salted-sha256==="
+#  groupNames = ["admins", "developers"]
+#  #...
+
+#################
+# The groups section
+[[groups]]
+  commonName = "admins"
+  description = "Administrators"
+
+#[[groups]]
+#  commonName = "developers"
+#  description = "Developers"

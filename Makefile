@@ -1,4 +1,4 @@
-VERSION=$(shell bin/glauth64 --version)
+VERSION=$(shell bin/authnds64 --version)
 
 GIT_COMMIT=$(shell git rev-list -1 HEAD )
 BUILD_TIME=$(shell date --utc +%Y%m%d_%H%M%SZ)
@@ -15,7 +15,7 @@ GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 # Build variables
 BUILD_VARS=-X main.GitCommit=${GIT_COMMIT} -X main.GitBranch=${GIT_BRANCH} -X main.BuildTime=${BUILD_TIME} -X main.GitClean=${GIT_CLEAN} -X main.LastGitTag=${LAST_GIT_TAG} -X main.GitTagIsCommit=${GIT_IS_TAG_COMMIT}
-BUILD_FILES=glauth.go bindata.go ldapbackend.go webapi.go configbackend.go configbackend_helpers.go auth.go
+BUILD_FILES=authnds.go config.go configbackend.go configbackend_helpers.go password.go version.go
 
 #####################
 # High level commands
@@ -69,25 +69,25 @@ devrun:
 
 
 linux32:
-	CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth32 ${BUILD_FILES} && cd bin && sha256sum glauth32 > glauth32.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=386 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/authnds32 ${BUILD_FILES} && cd bin && sha256sum authnds32 > authnds32.sha256
 
 linux64:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth64 ${BUILD_FILES} && cd bin && sha256sum glauth64 > glauth64.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/authnds64 ${BUILD_FILES} && cd bin && sha256sum authnds64 > authnds64.sha256
 
 linuxarm32:
-	CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-arm32 ${BUILD_FILES} && cd bin && sha256sum glauth-arm32 > glauth-arm32.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/authnds-arm32 ${BUILD_FILES} && cd bin && sha256sum authnds-arm32 > authnds-arm32.sha256
 
 linuxarm64:
-	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-arm64 ${BUILD_FILES} && cd bin && sha256sum glauth-arm64 > glauth-arm64.sha256
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/authnds-arm64 ${BUILD_FILES} && cd bin && sha256sum authnds-arm64 > authnds-arm64.sha256
 
 darwin64:
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauthOSX ${BUILD_FILES} && cd bin && sha256sum glauthOSX > glauthOSX.sha256
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/authndsOSX ${BUILD_FILES} && cd bin && sha256sum authndsOSX > authndsOSX.sha256
 
 win32:
-	CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-win32 ${BUILD_FILES} && cd bin && sha256sum glauth-win32 > glauth-win32.sha256
+	CGO_ENABLED=0 GOOS=windows GOARCH=386 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/authnds-win32 ${BUILD_FILES} && cd bin && sha256sum authnds-win32 > authnds-win32.sha256
 
 win64:
-	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/glauth-win64 ${BUILD_FILES} && cd bin && sha256sum glauth-win64 > glauth-win64.sha256
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a -installsuffix cgo -ldflags "${BUILD_VARS}" -o bin/authnds-win64 ${BUILD_FILES} && cd bin && sha256sum authnds-win64 > authnds-win64.sha256
 
 
 verify:

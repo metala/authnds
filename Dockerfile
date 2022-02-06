@@ -1,43 +1,31 @@
-#################
-# Build Step
-#################
-
-FROM golang:1.11 as build
+# Builder
+FROM golang:1.17 as build
 
 # Setup work env
-RUN mkdir /app /tmp/gocode
-ADD . /app/
-WORKDIR /app
-
-
-# Required envs for GO
-ENV GOPATH=/tmp/gocode
+RUN mkdir /src
+ADD . /src/
+WORKDIR /src
 
 # Install deps
 RUN go get -d -v ./...
 
-# Run go-bindata to embed data for API
-RUN go get -u github.com/jteeuwen/go-bindata/... && $GOPATH/bin/go-bindata -pkg=main assets && gofmt -w bindata.go
+# Build
+RUN make linux64
 
-# Build and copy final result
-RUN make linux64 && cp ./bin/glauth64 /app/glauth
-
-#################
-# Run Step
-#################
-
-FROM scratch
+# Runtime
+FROM scratch as runtime
 
 # Copy binary from build container
-COPY --from=build /app/glauth /app/glauth
+COPY --from=build /src/bin/authnds64 /app/authnds
+COPY ./config.toml.example /app/config.toml
 
 # User privileges nobody:nogroup
 USER 65534:65534
 
-# Expose web and LDAP ports
-EXPOSE 10389 10636 5555
+# Expose LDAP ports
+EXPOSE 10389 10636
 
 WORKDIR /app
-ENTRYPOINT ["./glauth"]
+ENTRYPOINT ["./authnds"]
 CMD ["-c", "/app/config.toml"]
 
