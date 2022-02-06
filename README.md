@@ -10,7 +10,7 @@ LDAP authentication server for developers and SOHO services. It uses a single to
 4. Test with traditional LDAP tools
    - For example: `ldapsearch -LLL -H ldap://localhost:389 -D cn=user1,ou=users,dc=example,dc=com -w secret -x -bdc=example,dc=com cn=user1`
 
-Thest result from the example / default config.
+The test result from the example / default config.
 ```unix
 $ ldapsearch -LLL -H ldap://localhost:389 -D cn=user1,ou=users,dc=example,dc=com -w secret -x -bdc=example,dc=com cn=user1
 dn: cn=user1,ou=users,dc=example,dc=com
@@ -29,7 +29,7 @@ uidNumber: 5001
 gidNumber: 5501
 loginShell: /bin/bash
 homeDirectory: /home/user1
-loginDisabled: FALSE`
+loginDisabled: FALSE
 accountStatus: active
 ```
 
